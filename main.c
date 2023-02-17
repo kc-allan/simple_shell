@@ -33,6 +33,7 @@ int main(int argc, char **argv, char **envp)
 		}
 		if (command[bytes_read - 1] == '\n')
 			command[bytes_read - 1] = '\0';
+		argv = get_token(command);
 		setenv("PATH", path, 1);
 		if (access(path, F_OK) == -1)
 		{
@@ -41,7 +42,7 @@ int main(int argc, char **argv, char **envp)
 		}
 		cmd = malloc(MAX_LEN);
 		strcpy(cmd, path);
-		strcat(cmd, command);
+		strcat(cmd, argv[0]);
 		pid = fork();
 		if (pid == -1)
 		{
