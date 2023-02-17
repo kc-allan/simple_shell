@@ -72,6 +72,13 @@ int main(int argc, char **envp)
 		}
 		if (command[bytes_read - 1] == '\n')
 			command[bytes_read - 1] = '\0';
+		if (strcmp(command, "exit") == 0)
+		{
+			printf("Exiting shell...\n");
+			sleep(3);
+			free(command);
+			exit(0);
+		}
 		argv = get_token(command);
 		execute_command(argv, envp);
 	}
