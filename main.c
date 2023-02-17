@@ -12,7 +12,7 @@ void execute_command(char **argv, char **envp)
 	pid_t pid;
 	int status;
 	size_t cmd_size = (strlen(path) + strlen(argv[0]) + 1);
-	
+
 	setenv("PATH", path, 1);
 	if (access(path, F_OK) == -1)
 	{
@@ -53,7 +53,7 @@ int main(int argc, char **envp)
 	char *command = NULL, **argv;
 	ssize_t bytes_read;
 	size_t len = 0;
-	
+
 	while (argc == 1)
 	{
 		printf("($) ");
