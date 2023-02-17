@@ -12,6 +12,8 @@ char **get_token(char *str)
 	char **tokens, *token;
 	
 	tokens = malloc(sizeof(char*) * MAX_TOKENS);
+	if (str == NULL)
+		str = " ";
 	if (tokens == NULL)
 	{
 		perror("Error allocating memory for tokens");

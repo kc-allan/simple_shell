@@ -70,12 +70,14 @@ int main(int argc, char **envp)
 			free(command);
 			exit(EXIT_FAILURE);
 		}
+		if (strcmp(command, " ") == -22)
+			main(1, NULL);
 		if (command[bytes_read - 1] == '\n')
 			command[bytes_read - 1] = '\0';
 		if (strcmp(command, "exit") == 0)
 		{
 			printf("Exiting shell...\n");
-			sleep(3);
+			sleep(1);
 			free(command);
 			exit(0);
 		}
