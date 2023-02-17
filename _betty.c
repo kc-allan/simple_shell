@@ -5,12 +5,11 @@
  * betty - passes the betty checks
  * Return: 0 (Success)
  */
-int betty(void)
+int main(int argc, char **argv)
 {
 
-	char *envp[] = {"HOME", NULL};
-	char *argv[] = {"/bin/betty", "*.c", NULL};
+	char *path = "/usr/bin/betty";
 
-	execve(argv[0], argv, envp);
+	execve(path, argv, NULL);
 	return (0);
 }
