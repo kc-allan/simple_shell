@@ -1,89 +1,44 @@
 #include "main.h"
-/**
- * execute_command - runs commamd provided to the shell
- * @argv: array of argument variables
- * @envp: environment variables
- *
- * Return: void
- */
-void execute_command(char **argv, char **envp)
-{
-	char *path = "/usr/bin/", *cmd;
-	pid_t pid;
-	int status;
-	size_t cmd_size = (strlen(path) + strlen(argv[0]) + 1);
-
-	setenv("PATH", path, 1);
-	if (access(path, F_OK) == -1)
-	{
-		printf("%s: command not found\n", argv[0]);
-		return;
-	}
-	cmd = malloc(cmd_size);
-	strcpy(cmd, path);
-	strcat(cmd, argv[0]);
-	pid = fork();
-	if (pid == -1)
-	{
-		perror("fork");
-		exit(EXIT_FAILURE);
-	}
-	if (pid == 0)
-	{
-		if (execve(cmd, argv, envp) == -1)
-		{
-			printf("./hsh: 1: %s: not found\n", argv[0]);
-			exit(EXIT_FAILURE);
-		}
-	}
-	else
-		wait(&status);
-	free(cmd);
-}
 
 /**
- * main - Entry point
- * @argc: argument count
- * @envp: environment variables
+ * main - entry point
+ * @ac: arg count
+ * @av: arg vector
  *
- * Return: 0 (Success)
+ * Return: 0 on success, 1 on error
  */
-int main(int argc, char **envp)
+int main(int ac, char **av)
 {
-	char *command = NULL, **argv;
-	ssize_t bytes_read;
-	size_t len = 0;
+	info_t info[] = { INFO_INIT };
+	int fd = 2;
 
-	while (argc == 1)
+	asm ("mov %1, %0\n\t"
+		"add $3, %0"
+		: "=r" (fd)
+		: "r" (fd));
+
+	if (ac == 2)
 	{
-		printf("($) ");
-		bytes_read = getline(&command, &len, stdin);
-		if (bytes_read == -1)
+		fd = open(av[1], O_RDONLY);
+		if (fd == -1)
 		{
-			if (feof(stdin))
+			if (errno == EACCES)
+				exit(126);
+			if (errno == ENOENT)
 			{
-				printf("\n");
-				free(command);
-				exit(EXIT_SUCCESS);
+				_eputs(av[0]);
+				_eputs(": 0: Can't open ");
+				_eputs(av[1]);
+				_eputchar('\n');
+				_eputchar(BUF_FLUSH);
+				exit(127);
 			}
-			perror("getline");
-			free(command);
-			exit(EXIT_FAILURE);
+			return (EXIT_FAILURE);
 		}
-		if (strcmp(command, " ") == -22)
-			main(1, NULL);
-		if (command[bytes_read - 1] == '\n')
-			command[bytes_read - 1] = '\0';
-		if (strcmp(command, "exit") == 0)
-		{
-			printf("Exiting shell...\n");
-			sleep(1);
-			free(command);
-			exit(0);
-		}
-		argv = get_token(command);
-		execute_command(argv, envp);
+		info->readfd = fd;
 	}
-	free(command);
-	return (0);
+	populate_env_list(info);
+	read_history(info);
+	hsh(info, av);
+	return (EXIT_SUCCESS);
 }
