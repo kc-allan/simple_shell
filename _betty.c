@@ -9,6 +9,8 @@
  */
 int main(int argc, char **argv, char **envp)
 {
+	if (argc == 0)
+		exit(EXIT_FAILURE);
 	execve("/usr/bin/betty", argv, envp);
 
 	return (0);
