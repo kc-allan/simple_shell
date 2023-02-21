@@ -109,4 +109,3 @@ int _myalias(info_t *inf)
 
 	return (0);
 }
-
