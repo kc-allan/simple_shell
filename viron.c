@@ -82,4 +82,4 @@ int populate_env_list(info_t *inf)
 		add_node_end(&node, environ[y], 0);
 	inf->env = node;
 	return (0);
-}	
+}
